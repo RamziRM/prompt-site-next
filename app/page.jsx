@@ -7,7 +7,7 @@ const Home = () => {
       <h1 className="head_text text-center">
         Discover & Share
         <br className="max-md:hidden" />
-        <span className="orange_gradient text-center">
+        <span className="orange_gradient text-center block">
           AI is here, for mostly better than worse
         </span>
       </h1>

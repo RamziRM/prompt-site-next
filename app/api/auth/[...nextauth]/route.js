@@ -14,33 +14,39 @@ const handler = NextAuth({
     }),
     // ...add more providers here
   ],
-  async session({ session }) {
-    // data about the user, to maintain session
-    const sessionUser = await User.findOne({ email: session.user.email });
-    // update session id with current user id
-    session.user.id = sessionUser._id.toString();
+  callbacks: {
+    async session({ session }) {
+      // data about the user, to maintain session
+      const sessionUser = await User.findOne({ email: session.user.email });
+      // update session id with current user id
+      session.user.id = sessionUser._id.toString();
 
-    return session;
-  },
-  async signIn({ profile }) {
-    try {
-      await connectToDB();
+      return session;
+    },
+    async signIn({ profile }) {
+      try {
+        await connectToDB();
 
-      // check if user exists
-      const userExists = await User.findOne({ email: profile.email });
+        // check if user exists
+        const userExists = await User.findOne({ email: profile.email });
 
-      // if not, create new user & save to db
-      if (!userExists) {
-        await User.create({
-          email: profile.email,
-          username: profile.name.replace(" ", " ").toLowerCase(),
-          image: profile.image,
-        });
+        // if not, create new user & save to db
+        if (!userExists) {
+          const { email, name, image } = profile;
+
+          const username = profile.name.replaceAll(" ", "").toLowerCase();
+
+          await User.create({
+            email,
+            username,
+            image,
+          });
+        }
+      } catch (error) {
+        console.log(error);
+        return false;
       }
-    } catch (error) {
-      console.log(error);
-      return false;
-    }
+    },
   },
 });
 

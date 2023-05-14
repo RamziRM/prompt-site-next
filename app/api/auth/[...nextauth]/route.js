@@ -32,18 +32,16 @@ const handler = NextAuth({
 
         // if not, create new user & save to db
         if (!userExists) {
-          const { email, name, image } = profile;
-
-          const username = profile.name.replaceAll(" ", "").toLowerCase();
-
           await User.create({
-            email,
-            username,
-            image,
+            email: profile.email,
+            username: profile.name.replace(" ", "").toLowerCase(),
+            image: profile.picture,
           });
         }
+
+        return true;
       } catch (error) {
-        console.log(error);
+        console.log("Error checking if user exists: ", error.message);
         return false;
       }
     },
